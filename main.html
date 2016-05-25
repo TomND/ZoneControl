@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+    <title>Zone Control</title>
+    <script src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    game.load.image('background', 'assets/BackgroundTest.png');
+    game.load.image('castle', 'assets/CastleTest.png');
+    game.load.image('unit', 'assets/UnitTest.png');
+
+}
+
+function create() {
+
+  game.add.sprite(0,0,'background');
+  game.add.sprite(0,0,'castle');
+  game.add.sprite(50,50,'unit');
+
+}
+
+function update() {
+}
+
+
+</script>
+
+</body>
+</html>
