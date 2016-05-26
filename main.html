@@ -17,6 +17,7 @@
 
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var unit;
 
 function preload() {
 
@@ -29,12 +30,27 @@ function preload() {
 function create() {
 
   game.add.sprite(0,0,'background');
-  game.add.sprite(0,0,'castle');
-  game.add.sprite(50,50,'unit');
+  game.add.sprite(350,350,'castle');
+  unit = game.add.sprite(200,200,'unit');
+
+
+	unit.inputEnabled = true;
+
+
+	unit.events.onInputDown.add(function(image){WriteToConsole(image, "Parameter passed")}, this);
+
+
 
 }
 
 function update() {
+
+}
+
+
+
+function WriteToConsole(image,value){
+	console.log(value);
 }
 
 
