@@ -15,7 +15,8 @@
 <body>
 
 	<script type="text/javascript">
-		var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+	// there should be one line of code here, max.
+		this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
 			preload: preload,
 			create: create,
 			update: update
@@ -60,7 +61,7 @@
 			//console.log(game.Physics.Arcade.distanceToXY(unit,0,0));
 			//map.events.onInputUp.add(unitDestination,this)
 			//map.Pointer.rightButton.onUp.add(unitDestination,this);
-			game.input.activePointer.rightButton.onUp.add(unitDestination,this);
+			game.input.activePointer.rightButton.onUp.add(unitDestination,this); // moved already
 
 
 
@@ -72,11 +73,11 @@
 			movementManager();
 
 		}
-
+		//move to controller
 		function movementManager(){
 			selected.forEach(function(item,index){
 				if(item != undefined){
-
+					// below is in unit now. above gos somewhere else..
 					//if(game.physics.arcade.distanceToXY(item,mouseX,mouseY) > 5){
 						if(new Phaser.Rectangle(mouseX,mouseY,10,10).intersects(item.body)){//Phaser.Rectangle.containsRect(item.body, new Phaser.Rectangle(mouseX,mouseY,10,10))){
 							item.body.velocity.setTo(0, 0);
@@ -91,7 +92,7 @@
 			})
 
 		}
-
+		//move to controller.js
 		function unitDestination() {
 			console.log(game.input.activePointer.position.x);
 
@@ -101,16 +102,17 @@
 			console.log(game.input.activePointer.position);
 		}
 
+		//move to controller
 		function addToSelected(newUnit) {
 			selected.push(newUnit);
 		}
-
+		//move to controller
 		function ResetSelected() {
 			selected = [];
 		}
 
 
-
+		//delete?
 		function WriteToConsole(image, value) {
 			console.log(value);
 		}
