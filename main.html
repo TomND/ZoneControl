@@ -4,7 +4,10 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Zone Control</title>
-	<script src="js/phaser.min.js"></script>
+	<script src="src/phaser.min.js"></script>
+	<script src="src/game.js"></script>
+	<script src="src/unit.js"></script>
+	<script src="src/controller.js"></script>
 	<style type="text/css">
 		body {
 			margin: 0;
@@ -16,106 +19,7 @@
 
 	<script type="text/javascript">
 	// there should be one line of code here, max.
-		this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-			preload: preload,
-			create: create,
-			update: update
-		});
-		var unit;
-		var unit2;
-		var map;
-		var castle;
-		var selected = [];
-		var mouseX;
-		var mouseY;
-
-
-		function preload() {
-
-			game.load.image('background', 'assets/BackgroundTest.png');
-			game.load.image('castle', 'assets/CastleTest.png');
-			game.load.image('unit', 'assets/UnitTest.png');
-
-		}
-
-		function create() {
-
-			game.canvas.oncontextmenu = function(e) {
-				e.preventDefault();
-			};
-			map = game.add.sprite(0, 0, 'background');
-			castle = game.add.sprite(350, 350, 'castle');
-			unit = game.add.sprite(200, 200, 'unit');
-			unit2 = game.add.sprite(300, 300, 'unit');
-
-
-			unit.inputEnabled = true;
-			unit2.inputEnabled = true;
-			map.inputEnabled = true;
-
-			game.physics.enable(unit, Phaser.Physics.ARCADE);
-			game.physics.enable(unit2, Phaser.Physics.ARCADE);
-			unit.events.onInputDown.add(addToSelected, this);
-			unit2.events.onInputDown.add(addToSelected, this);
-			console.log(unit);
-			//console.log(game.Physics.Arcade.distanceToXY(unit,0,0));
-			//map.events.onInputUp.add(unitDestination,this)
-			//map.Pointer.rightButton.onUp.add(unitDestination,this);
-			game.input.activePointer.rightButton.onUp.add(unitDestination,this); // moved already
-
-
-
-
-		}
-
-		function update() {
-
-			movementManager();
-
-		}
-		//move to controller
-		function movementManager(){
-			selected.forEach(function(item,index){
-				if(item != undefined){
-					// below is in unit now. above gos somewhere else..
-					//if(game.physics.arcade.distanceToXY(item,mouseX,mouseY) > 5){
-						if(new Phaser.Rectangle(mouseX,mouseY,10,10).intersects(item.body)){//Phaser.Rectangle.containsRect(item.body, new Phaser.Rectangle(mouseX,mouseY,10,10))){
-							item.body.velocity.setTo(0, 0);
-						}
-						else{
-							game.physics.arcade.moveToXY(item,mouseX,mouseY,100);
-						}
-
-					//}
-				}
-
-			})
-
-		}
-		//move to controller.js
-		function unitDestination() {
-			console.log(game.input.activePointer.position.x);
-
-			mouseX = game.input.activePointer.position.x;
-			mouseY = game.input.activePointer.position.y;
-			console.log(game.physics.arcade.distanceToXY(unit,mouseX,mouseY));
-			console.log(game.input.activePointer.position);
-		}
-
-		//move to controller
-		function addToSelected(newUnit) {
-			selected.push(newUnit);
-		}
-		//move to controller
-		function ResetSelected() {
-			selected = [];
-		}
-
-
-		//delete?
-		function WriteToConsole(image, value) {
-			console.log(value);
-		}
+		var game = new Game();
 	</script>
 
 </body>

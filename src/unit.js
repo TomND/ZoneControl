@@ -1,35 +1,54 @@
+// a unit object.
+var Unit = function(theGame,theController){
+  this.game = theGame;
+  this.controller = theController;
+  this.unitObject;
+  this.mine;
+  this.speed = 100;
+}
+//initializes a unit
+Unit.prototype.initialize = function(spawnX,spawnY){
+  console.log(game.game);
+  this.unitObject = this.game.add.sprite(spawnX, spawnY, 'unit');
+  this.unitObject.inputEnabled = true;
+  this.game.physics.enable(this.unitObject, Phaser.Physics.ARCADE);
+  this.unitObject.events.onInputDown.add(function(image) {
+      this.controller.addToSelected(image, this);
+  }, this);
+}
 
-
-function Unit(){
-
-
-  var unitObject;
-
-  this.unitObjPublic = function(){return unitObject};
-
-  Unit.prototype.initialize = function(){
-    unitObject = game.add.sprite(200,200,'unit');
-    unitObject.inputEnabled = true;
-    game.physics.enable(unit, Phaser.Physics.ARCADE);
-    unit.events.onInputDown.add(function(image){WriteToConsole(image, "Parameter passed")}, this);
-
+Unit.prototype.move = function(){
+  //console.log(this.controller.mouseX);
+  if (new Phaser.Rectangle(this.controller.mouseX, this.controller.mouseY, 10, 10).intersects(this.unitObject.body)) {
+      this.unitObject.body.velocity.setTo(0, 0);
+  } else {
+      this.game.physics.arcade.moveToXY(this.unitObject, this.controller.mouseX, this.controller.mouseY, this.speed);
   }
+}
 
-  Unit.prototype.test = function(){
-    console.log("this is a test");
-  }
+//unit manager, manages units processing like movement
+var UnitManager = function(theGame, theController){
+  this.game = theGame;
+  console.log(theController);
+  this.controller = theController;
+  this.units = [];
+}
 
-  Unit.prototype.Move = function(){
-    //if(game.physics.arcade.distanceToXY(item,mouseX,mouseY) > 5){
-      if(new Phaser.Rectangle(mouseX,mouseY,10,10).intersects(unitObject.body)){//Phaser.Rectangle.containsRect(item.body, new Phaser.Rectangle(mouseX,mouseY,10,10))){
-        unitObject.body.velocity.setTo(0, 0);
+//processes movement of all units
+UnitManager.prototype.processMovement = function(){
+
+  this.units.forEach(function(subUnit, index) {
+      if (subUnit != undefined) {
+          subUnit.move();
       }
-      else{
-        game.physics.arcade.moveToXY(unitObject,mouseX,mouseY,100);
-      }
-  }
 
+  })
 
+}
 
-
+//creates units
+UnitManager.prototype.createUnit = function(spawnX,spawnY){
+  var newUnit = new Unit(this.game,this.controller);
+  newUnit.initialize(spawnX, spawnY);
+  this.units.push(newUnit);
 }
