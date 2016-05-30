@@ -23,6 +23,7 @@ function Game(){
     this.game.load.image('background', 'assets/BackgroundTest.png');
     this.game.load.image('castle', 'assets/castleTest.png');
     this.game.load.image('unit', 'assets/UnitTest.png');
+    this.game.load.image('selectionBox', 'assets/selectionBox.png');
   }
 
   // create function of Phaser. consult phaser API for more info
@@ -38,14 +39,28 @@ function Game(){
     map.inputEnabled = true;
 
     controller = new Controller(this.game);
+
+    map.events.onInputDown.add(function(image) {
+        controller.clickDragStart();
+    }, this);
+    map.events.onInputUp.add(function(image) {
+        controller.clickDragStop();
+    }, this);
+
     unitManager = new UnitManager(this.game,controller);
     unitManager.createUnit(200,200);
+        console.log(this.returnUnitManager());
   }
 
   // update function of Phaser. consult phaser API for more info
   function update(){
     unitManager.processMovement();
+    controller.update();
   }
+
+Game.prototype.returnUnitManager = function() {
+  return unitManager;
+}
 
 }
 

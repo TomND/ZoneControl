@@ -25,6 +25,8 @@ Unit.prototype.move = function(){
   }
 }
 
+
+
 //unit manager, manages units processing like movement
 var UnitManager = function(theGame, theController){
   this.game = theGame;
@@ -49,4 +51,13 @@ UnitManager.prototype.createUnit = function(spawnX,spawnY){
   var newUnit = new Unit(this.game,this.controller);
   newUnit.initialize(spawnX, spawnY);
   this.units.push(newUnit);
+}
+
+UnitManager.prototype.returnSelected = function(rect){
+  var intersection = [];
+  this.units.forEach(function(subUnit,index){
+    if(rect.intersects(subUnit.body)){
+        this.controller.addToSelected(subUnit);
+    }
+  })
 }
