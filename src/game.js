@@ -21,7 +21,7 @@ function Game(){
   // preload function of Phaser. consult phaser API for more info
   function preload(){
     this.game.load.image('background', 'assets/BackgroundTest.png');
-    this.game.load.image('castle', 'assets/CastleTest.png');
+    this.game.load.image('castle', 'assets/castleTest.png');
     this.game.load.image('unit', 'assets/UnitTest.png');
   }
 
