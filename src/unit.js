@@ -8,7 +8,6 @@ var Unit = function(theGame,theController){
 }
 //initializes a unit
 Unit.prototype.initialize = function(spawnX,spawnY){
-  console.log(game.game);
   this.unitObject = this.game.add.sprite(spawnX, spawnY, 'unit');
   this.unitObject.inputEnabled = true;
   this.game.physics.enable(this.unitObject, Phaser.Physics.ARCADE);
@@ -29,7 +28,6 @@ Unit.prototype.move = function(){
 //unit manager, manages units processing like movement
 var UnitManager = function(theGame, theController){
   this.game = theGame;
-  console.log(theController);
   this.controller = theController;
   this.units = [];
 }

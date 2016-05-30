@@ -45,7 +45,6 @@ function Game(){
   // update function of Phaser. consult phaser API for more info
   function update(){
     unitManager.processMovement();
-    console.log(controller.mouseX);
   }
 
 }
