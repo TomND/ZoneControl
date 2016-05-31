@@ -1,4 +1,6 @@
-
+/*
+* Unit objeect. contains everything unit. each unit is a object of this class
+*/
 function Unit(theGame, theController){
   var game = theGame;
   var controller = theController;
@@ -8,15 +10,19 @@ function Unit(theGame, theController){
   var targetX;
   var targetY;
 
+  //returns the phaser unit object unitObject
+  //@rtype unitObject: sprite
   this.unit = function(){
     return unitObject;
   }
 
+  // sets targetx/y
   this.setTarget = function(x,y){
     targetX = x;
     targetY = y;
   }
 
+  //initializes unit.
   this.initialize = function(spawnX,spawnY){
     unitObject = game.add.sprite(spawnX, spawnY, 'unit');
     unitObject.inputEnabled = true;
@@ -26,6 +32,7 @@ function Unit(theGame, theController){
     }, this);
   }
 
+  // processes movement
   this.move = function(){
     //console.log(this.controller.mouseX);
     console.log(targetX);
@@ -41,78 +48,17 @@ function Unit(theGame, theController){
 
 }
 
-/*
-// a unit object.
-var Unit = function(theGame,theController){
-  this.game = theGame;
-  this.controller = theController;
-  this.unitObject;
-  this.mine;
-  this.speed = 100;
-}
-//initializes a unit
-Unit.prototype.initialize = function(spawnX,spawnY){
-  this.unitObject = this.game.add.sprite(spawnX, spawnY, 'unit');
-  this.unitObject.inputEnabled = true;
-  this.game.physics.enable(this.unitObject, Phaser.Physics.ARCADE);
-  this.unitObject.events.onInputDown.add(function(image) {
-      this.controller.addToSelected(image, this);
-  }, this);
-}
 
-Unit.prototype.move = function(){
-  //console.log(this.controller.mouseX);
-  if (new Phaser.Rectangle(this.controller.mouseX, this.controller.mouseY, 10, 10).intersects(this.unitObject.body)) {
-      this.unitObject.body.velocity.setTo(0, 0);
-  } else {
-      this.game.physics.arcade.moveToXY(this.unitObject, this.controller.mouseX, this.controller.mouseY, this.speed);
-  }
-}*/
-
-
-/*
-//unit manager, manages units processing like movement
-var UnitManager = function(theGame, theController){
-  this.game = theGame;
-  this.controller = theController;
-  this.units = [];
-}
-
-//processes movement of all units
-UnitManager.prototype.processMovement = function(){
-
-  this.units.forEach(function(subUnit, index) {
-      if (subUnit != undefined) {
-          subUnit.move();
-      }
-
-  })
-
-}
-
-//creates units
-UnitManager.prototype.createUnit = function(spawnX,spawnY){
-  var newUnit = new Unit(this.game,this.controller);
-  newUnit.initialize(spawnX, spawnY);
-  this.units.push(newUnit);
-}
-
-UnitManager.prototype.returnSelected = function(rect){
-  var intersection = [];
-  this.units.forEach(function(subUnit,index){
-    if(rect.intersects(subUnit.body)){
-        this.controller.addToSelected(subUnit);
-    }
-  })
-}
-*/
-
+//manages all units.
+//@type theGame: Game
+//@type theController: Controller
 function UnitManager(theGame,theController){
 
   var game = theGame;
   var controller = theController;
   var units = [];
 
+  //calls move for each unit
   this.processMovement = function(){
     units.forEach(function(subUnit, index) {
         if (subUnit != undefined) {
@@ -121,24 +67,26 @@ function UnitManager(theGame,theController){
 
     })
   }
-
+  //creates a new unit and stores in units;
+  //@type spawnX: int
+  //@type spawnY: int
   this.createUnit = function(spawnX,spawnY){
     var newUnit = new Unit(game,controller);
     newUnit.initialize(spawnX, spawnY);
     units.push(newUnit);
   }
 
+  //returns all units overlapping rect
   function returnSelected(rect){
-    console.log(units);
     units.forEach(function(subUnit,index){
       if(rect.overlap(subUnit.unit())){
-        console.log(subUnit);
           controller.addToSelected(null,subUnit);
       }
     })
   }
-
+  // gets called when clickDragStops
   this.clickDragStop = function(){
+    controller.resetSelected();
     var rect = controller.returnSelectionBox();
     returnSelected(rect);
     controller.disableSelectionBox();

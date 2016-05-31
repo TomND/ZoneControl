@@ -1,4 +1,7 @@
 
+/*
+* Handles all controls for the game.
+*/
 function Controller(theGame){
   var that = this;
   var game = theGame;
@@ -11,6 +14,7 @@ function Controller(theGame){
   var dragStartX;
   var dragStartY;
 
+  //sets the x,y coordinate destination for each selected unit
   function unitDestination(){
     console.log(selected);
     var x = game.input.activePointer.position.x;
@@ -19,16 +23,9 @@ function Controller(theGame){
       console.log(subUnit);
       subUnit.setTarget(x,y);
     })
-    //mouseX = game.input.activePointer.position.x;
-    //mouseY = game.input.activePointer.position.y;
   }
-/*
-  var unitDestination = function(){
-    mouseX = game.input.activePointer.position.x;
-    mouseY = game.input.activePointer.position.y;
-    return 1
-  }*/
 
+  //returns mouse position
   this.getMousePosition = function(){
     curMouseX = game.input.activePointer.position.x;
     curMouseY = game.input.activePointer.position.y;
@@ -38,12 +35,23 @@ function Controller(theGame){
     };
   }
 
+  // adds a unit to selected array
+  /*
+  * @type newUnit: Unit
+  * @type image: image of prev class, ignore
+  */
   this.addToSelected = function(image,newUnit){
     console.log("push to selected "+ newUnit);
     selected.push(newUnit);
 
   }
 
+  // resets selected
+  this.resetSelected = function(){
+    selected = [];
+  }
+
+  //sets click drag parameters
   this.clickDragStart = function(){
     dragStartX = this.getMousePosition().X;
     dragStartY = this.getMousePosition().Y;
@@ -53,6 +61,7 @@ function Controller(theGame){
     dragging = true;
   }
 
+  // processes scale and sets click drag box size accordingly
   this.clickDragHold = function(){
     if(dragging){
         var width = dragStartX - this.getMousePosition().X;
@@ -63,86 +72,20 @@ function Controller(theGame){
     }
   }
 
+  // returns selectionBox
+  // @rtype: unit array
   this.returnSelectionBox = function(){
     return selectionBox;
   }
+  //disables selection box
   this.disableSelectionBox = function(){
     dragging = false;
     selectionBox.position.x = 200000;
     //selectionBox = null;
   }
-
+  //updates selection box
   this.update = function(){
     this.clickDragHold();
   }
 
 }
-
-/*
-//Deals with control inputs from the player
-var Controller = function(theGame) {
-    this.game = theGame;
-    this.mouseX;
-    this.mouseY;
-    this.selected = [];
-    this.game.input.activePointer.rightButton.onUp.add(this.unitDestination, this);
-    this.selectionBox;
-    this.dragging = false;
-}
-//sets mouse x,y coordinates. the destination for the units
-Controller.prototype.unitDestination = function() {
-    this.mouseX = this.game.input.activePointer.position.x;
-    this.mouseY = this.game.input.activePointer.position.y;
-}
-
-Controller.prototype.getMousePosition = function(){
-  mouseX = this.game.input.activePointer.position.x;
-  mouseY = this.game.input.activePointer.position.y;
-  return{
-    mouseX: mouseX,
-    mouseY: mouseY
-  };
-}
-
-//adds clicked on units to selected array
-Controller.prototype.addToSelected = function(image,newUnit) {
-    this.selected.push(newUnit);
-}
-//resets selected to blank array
-Controller.prototype.resetSelected = function() {
-    selected = [];
-}
-
-
-Controller.prototype.clickDragStart = function(){
-  this.dragStartX = this.getMousePosition().mouseX;
-  console.log(this.dragStartX)
-  this.dragStartY = this.getMousePosition().mouseY;
-  this.selectionBox = this.game.add.sprite(this.dragStartX,this.dragStartY,'selectionBox');
-  this.selectionBox.alpha = 0.2;
-  this.game.physics.enable(this.selectionBox, Phaser.Physics.ARCADE);
-  this.dragging = true;
-}
-
-Controller.prototype.clickDragHold = function(){
-  if(this.dragging){
-      var width = this.dragStartX - this.getMousePosition().mouseX;
-      console.log(this.getMousePosition().mouseX);
-      var scaleX = width/10;
-      var height = this.dragStartY - this.getMousePosition().mouseY;
-      var scaleY = height/10;
-      this.selectionBox.scale.setTo(-scaleX,-scaleY);
-  }
-
-}
-
-Controller.prototype.clickDragStop = function(){
-  console.log(game.wtf);
-  var unitManager = this.game.returnUnitManager();
-  unitManager.returnSelected();
-  this.selectionBox = null;
-}
-
-Controller.prototype.update = function(){
-   this.clickDragHold();
-}*/
