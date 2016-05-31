@@ -41,20 +41,21 @@ function Game(){
     castle = game.add.sprite(350, 350, 'castle');
 
     map.inputEnabled = true;
+    castle.inputEnabled = true;
 
     controller = new Controller(game);
     unitManager = new UnitManager(game,controller);
     unitManager.createUnit(200,200);
     unitManager.createUnit(300,300);
 
-
+/*
     map.events.onInputDown.add(function(image) {
         controller.clickDragStart();
     }, this);
     map.events.onInputUp.add(function(image) {
         unitManager.clickDragStop();
     }, this);
-
+*/
 
 
   }
@@ -63,6 +64,12 @@ function Game(){
   function update(){
     unitManager.processMovement();
     controller.update();
+    if(map.input.pointerDown()){
+      if(this.input.activePointer.button === Phaser.Mouse.LEFT_BUTTON){
+        console.log("gottem");
+      }
+
+    }
   }
 
 

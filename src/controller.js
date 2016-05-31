@@ -5,6 +5,7 @@
 function Controller(theGame){
   var that = this;
   var game = theGame;
+  var unitManager;
   var mouseX; //deprecated
   var mouseY; // deprecated
   var selected = [];
@@ -23,6 +24,10 @@ function Controller(theGame){
       console.log(subUnit);
       subUnit.setTarget(x,y);
     })
+  }
+
+  this.getUnitManager = function(uMan){
+    unitManager = uMan;
   }
 
   //returns mouse position
@@ -53,8 +58,8 @@ function Controller(theGame){
 
   //sets click drag parameters
   this.clickDragStart = function(){
-    dragStartX = this.getMousePosition().X;
-    dragStartY = this.getMousePosition().Y;
+    dragStartX = that.getMousePosition().X;
+    dragStartY = that.getMousePosition().Y;
     selectionBox = game.add.sprite(dragStartX,dragStartY,'selectionBox');
     selectionBox.alpha = 0.2;
     game.physics.enable(selectionBox, Phaser.Physics.ARCADE);

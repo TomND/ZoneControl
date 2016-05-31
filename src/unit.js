@@ -57,6 +57,12 @@ function UnitManager(theGame,theController){
   var game = theGame;
   var controller = theController;
   var units = [];
+  game.input.activePointer.leftButton.onDown.add(controller.clickDragStart, this);
+  game.input.activePointer.leftButton.onUp.add(clickDragStop, this);
+
+  function sendControllerSelf(){
+    controller.getUnitManager(this);
+  }
 
   //calls move for each unit
   this.processMovement = function(){
@@ -85,7 +91,7 @@ function UnitManager(theGame,theController){
     })
   }
   // gets called when clickDragStops
-  this.clickDragStop = function(){
+  function clickDragStop(){
     controller.resetSelected();
     var rect = controller.returnSelectionBox();
     returnSelected(rect);
