@@ -6,50 +6,56 @@ function Game(){
 
   var map;
   var castle;
+  var unitManager;
+  var controller;
 
+  function getUnitManager(){
+    return 7;
+  }
 
-
-  this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+  var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload,
     create: create,
     update: update
   });
 
-  var unitManager;
-  var controller;
+
+
 
   // preload function of Phaser. consult phaser API for more info
   function preload(){
-    this.game.load.image('background', 'assets/BackgroundTest.png');
-    this.game.load.image('castle', 'assets/castleTest.png');
-    this.game.load.image('unit', 'assets/UnitTest.png');
-    this.game.load.image('selectionBox', 'assets/selectionBox.png');
+    game.load.image('background', 'assets/BackgroundTest.png');
+    game.load.image('castle', 'assets/castleTest.png');
+    game.load.image('unit', 'assets/UnitTest.png');
+    game.load.image('selectionBox', 'assets/selectionBox.png');
   }
 
   // create function of Phaser. consult phaser API for more info
   function create(){
     //disables right click menu in browser
-    this.game.canvas.oncontextmenu = function(e) {
+    game.canvas.oncontextmenu = function(e) {
       e.preventDefault();
     };
 
-    map = this.game.add.sprite(0, 0, 'background');
-    castle = this.game.add.sprite(350, 350, 'castle');
+    map = game.add.sprite(0, 0, 'background');
+    castle = game.add.sprite(350, 350, 'castle');
 
     map.inputEnabled = true;
 
-    controller = new Controller(this.game);
+    controller = new Controller(game);
+    unitManager = new UnitManager(game,controller);
+    unitManager.createUnit(200,200);
+    unitManager.createUnit(300,300);
+
 
     map.events.onInputDown.add(function(image) {
         controller.clickDragStart();
     }, this);
     map.events.onInputUp.add(function(image) {
-        controller.clickDragStop();
+        unitManager.clickDragStop();
     }, this);
 
-    unitManager = new UnitManager(this.game,controller);
-    unitManager.createUnit(200,200);
-        console.log(this.returnUnitManager());
+
   }
 
   // update function of Phaser. consult phaser API for more info
@@ -58,9 +64,8 @@ function Game(){
     controller.update();
   }
 
-Game.prototype.returnUnitManager = function() {
-  return unitManager;
-}
+
+
 
 }
 

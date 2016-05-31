@@ -1,3 +1,84 @@
+
+function Controller(theGame){
+  var that = this;
+  var game = theGame;
+  var mouseX; //deprecated
+  var mouseY; // deprecated
+  var selected = [];
+  game.input.activePointer.rightButton.onUp.add(unitDestination, this);
+  var selectionBox;
+  var dragging = false;
+  var dragStartX;
+  var dragStartY;
+
+  function unitDestination(){
+    console.log(selected);
+    var x = game.input.activePointer.position.x;
+    var y = game.input.activePointer.position.y;
+    selected.forEach(function(subUnit,index){
+      console.log(subUnit);
+      subUnit.setTarget(x,y);
+    })
+    //mouseX = game.input.activePointer.position.x;
+    //mouseY = game.input.activePointer.position.y;
+  }
+/*
+  var unitDestination = function(){
+    mouseX = game.input.activePointer.position.x;
+    mouseY = game.input.activePointer.position.y;
+    return 1
+  }*/
+
+  this.getMousePosition = function(){
+    curMouseX = game.input.activePointer.position.x;
+    curMouseY = game.input.activePointer.position.y;
+    return{
+      X: curMouseX,
+      Y: curMouseY
+    };
+  }
+
+  this.addToSelected = function(image,newUnit){
+    console.log("push to selected "+ newUnit);
+    selected.push(newUnit);
+
+  }
+
+  this.clickDragStart = function(){
+    dragStartX = this.getMousePosition().X;
+    dragStartY = this.getMousePosition().Y;
+    selectionBox = game.add.sprite(dragStartX,dragStartY,'selectionBox');
+    selectionBox.alpha = 0.2;
+    game.physics.enable(selectionBox, Phaser.Physics.ARCADE);
+    dragging = true;
+  }
+
+  this.clickDragHold = function(){
+    if(dragging){
+        var width = dragStartX - this.getMousePosition().X;
+        var scaleX = width/10;
+        var height = dragStartY - this.getMousePosition().Y;
+        var scaleY = height/10;
+        selectionBox.scale.setTo(-scaleX,-scaleY);
+    }
+  }
+
+  this.returnSelectionBox = function(){
+    return selectionBox;
+  }
+  this.disableSelectionBox = function(){
+    dragging = false;
+    selectionBox.position.x = 200000;
+    //selectionBox = null;
+  }
+
+  this.update = function(){
+    this.clickDragHold();
+  }
+
+}
+
+/*
 //Deals with control inputs from the player
 var Controller = function(theGame) {
     this.game = theGame;
@@ -56,12 +137,12 @@ Controller.prototype.clickDragHold = function(){
 }
 
 Controller.prototype.clickDragStop = function(){
-  var unitManager = this.game.returnUnitManager;
-  console.log(this.game.returnUnitManager);
+  console.log(game.wtf);
+  var unitManager = this.game.returnUnitManager();
   unitManager.returnSelected();
   this.selectionBox = null;
 }
 
 Controller.prototype.update = function(){
    this.clickDragHold();
-}
+}*/
