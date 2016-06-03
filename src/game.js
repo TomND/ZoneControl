@@ -28,6 +28,8 @@ function Game(){
     game.load.image('castle', 'assets/castleTest.png');
     game.load.image('unit', 'assets/UnitTest.png');
     game.load.image('selectionBox', 'assets/selectionBox.png');
+    game.load.image('healthBackground', 'assets/HealthBackGround.png');
+    game.load.image('healthIndicator', 'assets/HealthIndicator.png');
   }
 
   // create function of Phaser. consult phaser API for more info
