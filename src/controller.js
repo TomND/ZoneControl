@@ -32,7 +32,7 @@ function Controller(theGame,theClient){
       subUnit.setTarget(x,y);
       console.log("this");
       client.socket.emit('UnitUpdate',{
-        id: subUnit.id,
+        id: subUnit.getID(),
         x: x,
         y: y,
       });

@@ -12,6 +12,7 @@ function Unit(theGame, theController, thehealthBar){
   var targetY;
   var health = 75;
   var id;
+  this.mine;
 
 
   //returns the phaser unit object unitObject
@@ -26,6 +27,7 @@ function Unit(theGame, theController, thehealthBar){
     targetY = y;
   }
 
+
   this.getTarget = function(){
     return{
       x: targetX,
@@ -33,8 +35,13 @@ function Unit(theGame, theController, thehealthBar){
     };
   };
 
+
+  this.getID = function(){
+    return id;
+  }
+
   //initializes unit.
-  this.initialize = function(spawnX,spawnY){
+  this.initialize = function(spawnX,spawnY,uid,isMine){
     unitObject = game.add.sprite(spawnX, spawnY, 'unit');
     unitObject.inputEnabled = true;
     game.physics.enable(unitObject, Phaser.Physics.ARCADE);
@@ -42,7 +49,9 @@ function Unit(theGame, theController, thehealthBar){
         controller.addToSelected(image, this);
     }, this);
     healthBar.initialize(spawnX,spawnY);
-    id = 1;// = Math.random() * (10000 - 1) + 1;
+    console.log(uid);
+    id = uid;// = Math.random() * (10000 - 1) + 1;
+    this.mine = isMine;
   }
 
   this.GetPosition = function(){
@@ -90,7 +99,7 @@ function UnitHealthBar(theGame){
   this.initialize = function(x,y){
     healthBackgroundSprite = game.add.sprite(x, y + 35, 'healthBackground');
     HealthIndicatorSprite = game.add.sprite(x, y + 35, 'healthIndicator');
-    console.log(y);
+    //console.log(y);
   }
 
   this.healthBarManager = function(x,y,health){
@@ -131,6 +140,25 @@ function UnitManager(theGame,theController){
     return units;
   }
 
+  this.getMine = function(){
+    var myUnits = []
+    units.forEach(function(unit,index){
+      console.log(unit.mine);
+      if(unit.mine == true){
+        var info = {
+          unitID: unit.getID(),
+          x: unit.GetPosition().x,
+          y: unit.GetPosition().y
+        };/*function(){
+          this.unitID = unit.getID();
+          this.position = unit.getPosition();
+        }*/
+        myUnits.push(info);
+      }
+    })
+    return myUnits;
+  }
+
   //calls move for each unit
   this.processMovement = function(){
     units.forEach(function(subUnit, index) {
@@ -143,10 +171,19 @@ function UnitManager(theGame,theController){
   //creates a new unit and stores in units;
   //@type spawnX: int
   //@type spawnY: int
-  this.createUnit = function(spawnX,spawnY){
+  this.createUnit = function(spawnX,spawnY,uid,mine){
+    var clone = false;
+    units.forEach(function(unit,index){
+      if(unit.getID() == uid){
+        clone = true;
+      }
+    })
+    if(clone == true){
+      return;
+    }
     healthBar = new UnitHealthBar(game);
     var newUnit = new Unit(game,controller, healthBar);
-    newUnit.initialize(spawnX, spawnY);
+    newUnit.initialize(spawnX, spawnY,uid,mine);
     units.push(newUnit);
   }
 

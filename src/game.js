@@ -13,11 +13,8 @@ function Game(){
 
   //var socket = io.connect('http://localhost:3000');
 
-  function getUnitManager(){
-    return 7;
-  }
 
-  
+
   var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload,
     create: create,
@@ -58,8 +55,6 @@ function Game(){
 
     controller = new Controller(game,client);
     unitManager = new UnitManager(game,controller);
-    unitManager.createUnit(200,200);
-    unitManager.createUnit(300,300);
     client.initialize(unitManager);
 
 /*
@@ -79,6 +74,7 @@ function Game(){
     unitManager.processMovement();
     controller.update();
     client.listen();
+    client.updateUnitData();
     if(map.input.pointerDown()){
       if(this.input.activePointer.button === Phaser.Mouse.LEFT_BUTTON){
       //  console.log("gottem");
