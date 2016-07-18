@@ -2,9 +2,10 @@
 /*
 * Handles all controls for the game.
 */
-function Controller(theGame){
+function Controller(theGame,theClient){
   var that = this;
   var game = theGame;
+  var client = theClient;
   var unitManager;
   var mouseX; //deprecated
   var mouseY; // deprecated
@@ -23,6 +24,12 @@ function Controller(theGame){
     selected.forEach(function(subUnit,index){
       console.log(subUnit);
       subUnit.setTarget(x,y);
+      console.log(x);
+      client.socket.emit('UnitUpdate',{
+        id: subUnit.id,
+        x: x,
+        y: y,
+      });
     })
   }
 

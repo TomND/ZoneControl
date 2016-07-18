@@ -8,16 +8,23 @@ function Game(){
   var castle;
   var unitManager;
   var controller;
+  var client;
+  var config = {  forceSetTimeOut: true,  renderer: Phaser.AUTO,  width: 1000,  height: 700};
+
+  //var socket = io.connect('http://localhost:3000');
 
   function getUnitManager(){
     return 7;
   }
 
+  var game = new Phaser.Game(config);
   var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload,
     create: create,
     update: update
   });
+
+
 
 
 
@@ -30,10 +37,14 @@ function Game(){
     game.load.image('selectionBox', 'assets/selectionBox.png');
     game.load.image('healthBackground', 'assets/HealthBackGround.png');
     game.load.image('healthIndicator', 'assets/HealthIndicator.png');
+    game.state.disableVisibilityChange = true;
+    console.log(game.state.disableVisibilityChange);
   }
 
   // create function of Phaser. consult phaser API for more info
   function create(){
+
+    client = new Client();
     //disables right click menu in browser
     game.canvas.oncontextmenu = function(e) {
       e.preventDefault();
@@ -45,10 +56,11 @@ function Game(){
     map.inputEnabled = true;
     castle.inputEnabled = true;
 
-    controller = new Controller(game);
+    controller = new Controller(game,client);
     unitManager = new UnitManager(game,controller);
     unitManager.createUnit(200,200);
     unitManager.createUnit(300,300);
+    client.initialize(unitManager);
 
 /*
     map.events.onInputDown.add(function(image) {
@@ -66,12 +78,18 @@ function Game(){
   function update(){
     unitManager.processMovement();
     controller.update();
+    client.listen();
     if(map.input.pointerDown()){
       if(this.input.activePointer.button === Phaser.Mouse.LEFT_BUTTON){
-        console.log("gottem");
+      //  console.log("gottem");
+        //socket.emit('click','click');
       }
 
     }
+
+
+
+
   }
 
 

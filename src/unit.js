@@ -11,6 +11,7 @@ function Unit(theGame, theController, thehealthBar){
   var targetX;
   var targetY;
   var health = 75;
+  var id;
 
 
   //returns the phaser unit object unitObject
@@ -25,6 +26,13 @@ function Unit(theGame, theController, thehealthBar){
     targetY = y;
   }
 
+  this.getTarget = function(){
+    return{
+      x: targetX,
+      y: targetY
+    };
+  };
+
   //initializes unit.
   this.initialize = function(spawnX,spawnY){
     unitObject = game.add.sprite(spawnX, spawnY, 'unit');
@@ -34,6 +42,7 @@ function Unit(theGame, theController, thehealthBar){
         controller.addToSelected(image, this);
     }, this);
     healthBar.initialize(spawnX,spawnY);
+    id = 1;// = Math.random() * (10000 - 1) + 1;
   }
 
   this.GetPosition = function(){
@@ -57,15 +66,14 @@ function Unit(theGame, theController, thehealthBar){
   // processes movement
   this.move = function(){
     //console.log(this.controller.mouseX);
-    console.log(targetX);
     if (targetX == null || targetY == null || new Phaser.Rectangle(targetX, targetY, 10, 10).intersects(unitObject.body)) {
         unitObject.body.velocity.setTo(0, 0);
     } else {
 
         game.physics.arcade.moveToXY(unitObject, targetX, targetY, speed);
-        console.log("moving");
+        //console.log("moving");
     }
-    console.log(health + "the leead")
+    //console.log(health + "the leead")
     healthBar.healthBarManager(GetPositionPrivate().x,GetPositionPrivate().y,health);
 
   }
@@ -117,6 +125,10 @@ function UnitManager(theGame,theController){
 
   function sendControllerSelf(){
     controller.getUnitManager(this);
+  }
+
+  this.getUnits = function(){
+    return units;
   }
 
   //calls move for each unit
