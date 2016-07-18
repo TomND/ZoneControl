@@ -25,7 +25,7 @@ function Client(){
         units.forEach(function(subUnit,index){
           if(subUnit.id == data.id){
              subUnit.setTarget(data.x,data.y);
-             console.log(data.x);
+
           }
         })
     });

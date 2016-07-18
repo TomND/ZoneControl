@@ -15,16 +15,22 @@ function Controller(theGame,theClient){
   var dragging = false;
   var dragStartX;
   var dragStartY;
+  var lastTime = 0 ;
+  var once = false;
 
   //sets the x,y coordinate destination for each selected unit
   function unitDestination(){
-    console.log(selected);
+    var time = new Date();
+    if(time - lastTime < 100){
+      return;
+    }
+    lastTime = new Date();
+
     var x = game.input.activePointer.position.x;
     var y = game.input.activePointer.position.y;
     selected.forEach(function(subUnit,index){
-      console.log(subUnit);
       subUnit.setTarget(x,y);
-      console.log(x);
+      console.log("this");
       client.socket.emit('UnitUpdate',{
         id: subUnit.id,
         x: x,
