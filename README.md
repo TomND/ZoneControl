@@ -42,27 +42,6 @@ There are several types of units, each with its own perks and abilities. The cur
 
 ##Buildings
 There is one building in each territory. This building is able to train all units, at varying costs. The building also has a passive buff which gives units in its “zone” +50% attack/hp. Attached to each building is a “zone” where a unit must be kept in at all times. In the beginning of the game a soldier will be placed into it, however the player has the option to allow any unit inside it.
-#Work Division
-Sean
--	Executive Planning 
--	User profiles / inventory
--	Business stuff
--	Assets
--	Website
-Siavash
--	Player to Server interaction
--	Back-end server 
--	Matchmaking algorithm
--	Basically stuff for players to play vs each other
-Matthew / Thomas
--	Gameplay 
--	Balance changes
-Cumulative
--	Creative brainstorming
--	Advertising
-Monetization
-Soon To Come
-(soon to come in newer document with market research etc.)
 
 #First Steps
 
