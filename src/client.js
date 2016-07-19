@@ -52,7 +52,6 @@ function Client(){
     if(time - lastTime > timeInterval){
       lastTime = new Date();
       var units = unitManager.getMine();
-      console.log(units);
       this.socket.emit('positionUpdate',units);
     }
   }

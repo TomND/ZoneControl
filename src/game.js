@@ -9,7 +9,7 @@ function Game(){
   var unitManager;
   var controller;
   var client;
-  var config = {  forceSetTimeOut: true,  renderer: Phaser.AUTO,  width: 1000,  height: 700};
+  //var config = {  forceSetTimeOut: true,  renderer: Phaser.AUTO,  width: 1000,  height: 700};
 
   //var socket = io.connect('http://localhost:3000');
 
@@ -34,6 +34,7 @@ function Game(){
     game.load.image('selectionBox', 'assets/selectionBox.png');
     game.load.image('healthBackground', 'assets/HealthBackGround.png');
     game.load.image('healthIndicator', 'assets/HealthIndicator.png');
+    game.load.image('bullet','assets/BulletTest.png');
     game.state.disableVisibilityChange = true;
     console.log(game.state.disableVisibilityChange);
   }
@@ -57,14 +58,7 @@ function Game(){
     unitManager = new UnitManager(game,controller);
     client.initialize(unitManager);
 
-/*
-    map.events.onInputDown.add(function(image) {
-        controller.clickDragStart();
-    }, this);
-    map.events.onInputUp.add(function(image) {
-        unitManager.clickDragStop();
-    }, this);
-*/
+
 
 
   }
@@ -72,6 +66,7 @@ function Game(){
   // update function of Phaser. consult phaser API for more info
   function update(){
     unitManager.processMovement();
+    unitManager.processClicks();
     controller.update();
     client.listen();
     client.updateUnitData();

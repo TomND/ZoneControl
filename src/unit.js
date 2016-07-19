@@ -143,7 +143,6 @@ function UnitManager(theGame,theController){
   this.getMine = function(){
     var myUnits = []
     units.forEach(function(unit,index){
-      console.log(unit.mine);
       if(unit.mine == true){
         var info = {
           unitID: unit.getID(),
@@ -168,6 +167,26 @@ function UnitManager(theGame,theController){
 
     })
   }
+
+  // handles right clicking targets
+  this.processClicks = function(){
+    units.forEach(function(subUnit, index) {
+        if (subUnit != undefined) {
+          if(subUnit.unit().input.pointerDown()){
+            if(game.input.activePointer.button === Phaser.Mouse.RIGHT_BUTTON){
+              console.log("right clicked unit");
+              if(subUnit.mine == false){
+                //ATTACK
+              }
+              //socket.emit('click','click');
+            }
+          }
+
+        }
+
+    })
+  }
+
   //creates a new unit and stores in units;
   //@type spawnX: int
   //@type spawnY: int
