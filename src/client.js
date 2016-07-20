@@ -24,6 +24,9 @@ function Client(){
 
   this.listen = function(){
 
+    this.socket.on('disconnect',function(data){
+      unitManager.destroyUnit(data);
+    })
 
     this.socket.on('UnitUpdate',function(data){
         units.forEach(function(subUnit,index){

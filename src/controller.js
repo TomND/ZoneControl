@@ -43,6 +43,10 @@ function Controller(theGame,theClient){
     unitManager = uMan;
   }
 
+  this.returnSelected = function(){
+    return selected;
+  }
+
   //returns mouse position
   this.getMousePosition = function(){
     curMouseX = game.input.activePointer.position.x;

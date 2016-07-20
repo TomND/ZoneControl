@@ -15,7 +15,7 @@ function Game(){
 
 
 
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+  var game = new Phaser.Game(2000, 900, Phaser.AUTO, '', {
     preload: preload,
     create: create,
     update: update
@@ -35,13 +35,12 @@ function Game(){
     game.load.image('healthBackground', 'assets/HealthBackGround.png');
     game.load.image('healthIndicator', 'assets/HealthIndicator.png');
     game.load.image('bullet','assets/BulletTest.png');
-    game.state.disableVisibilityChange = true;
-    console.log(game.state.disableVisibilityChange);
+
   }
 
   // create function of Phaser. consult phaser API for more info
   function create(){
-
+    game.stage.disableVisibilityChange = true;
     client = new Client();
     //disables right click menu in browser
     game.canvas.oncontextmenu = function(e) {

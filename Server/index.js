@@ -8,6 +8,15 @@ var players = [];
 
 io.on('connection', function(socket) {
 
+    socket.on('disconnect',function(){
+      units.forEach(function(unit,index){
+        if(unit.playerID == socket.id){
+          units.splice(index,1);
+          io.emit('disconnect',unit.unitID);
+        }
+      })
+    })
+
     io.emit('test', '12333');
 
     socket.on('click', function(data) {
