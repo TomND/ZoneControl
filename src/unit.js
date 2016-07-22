@@ -1,7 +1,8 @@
 /*
  * Unit objeect. contains everything unit. each unit is a object of this class
  */
-function Unit(theGame, theController, thehealthBar) {
+function Unit(theGame, theController, thehealthBar,theClient) {
+    var client = theClient;
     var game = theGame;
     var controller = theController;
     var healthBar = thehealthBar;
@@ -10,7 +11,7 @@ function Unit(theGame, theController, thehealthBar) {
     var speed = 100;
     var targetX;
     var targetY;
-    var health = 75;
+    var health = 100;
     var id;
     this.mine;
     this.unitTarget;
@@ -48,6 +49,28 @@ function Unit(theGame, theController, thehealthBar) {
             y: targetY
         };
     };
+
+    this.getBullets = function(){
+      return bullets;
+    }
+
+    this.getTargetID = function(target){
+      if(target == null){
+        return null
+      }
+      else{
+        return target.getID();
+      }
+    }
+
+    function getTargetIDPrivate(target){
+      if(target == null){
+        return null
+      }
+      else{
+        return target.getID();
+      }
+    }
 
 
     this.getID = function() {
@@ -90,12 +113,24 @@ function Unit(theGame, theController, thehealthBar) {
         var time = new Date()
         if (time - lastFire > fireRate) {
             lastFire = new Date();
-            var bullet = new Bullet(game, GetPositionPrivate().x, GetPositionPrivate().y);
-            bullet.initialize(unitTarget);
+            //var bullet = new Bullet(game, GetPositionPrivate().x, GetPositionPrivate().y);
+            //bullet.initialize(unitTarget);
+            client.socket.emit('bullet',{
+              id:id,
+              x: GetPositionPrivate().x,
+              y: GetPositionPrivate().y,
+              target: getTargetIDPrivate(unitTarget)
+            });
 
-            bullets.push(bullet);
         }
 
+    }
+
+    this.createBullet = function(x,y,target,theID){
+      console.log('bulletcreated');
+      var bullet = new Bullet(game, x, y,theID);
+      bullet.initialize(target);
+      bullets.push(bullet);
     }
 
     // check for bullet collision and call bullet movement
@@ -109,6 +144,8 @@ function Unit(theGame, theController, thehealthBar) {
                 return;
               }
                 if (Phaser.Rectangle.intersects(bullet.getBulletObject().body, unit.unit().body) && unit.mine == false) {
+                  console.log(unit.getID());
+                  console.log(id);
                     bullet.getBulletObject().destroy();
                     unit.hit(bullet.getDamage());
                     bullets.splice(bIndex,1);
@@ -130,6 +167,7 @@ function Unit(theGame, theController, thehealthBar) {
             unitObject.body.velocity.setTo(0, 0);
         } else {
             if (this.unitTarget != null) {
+              console.log(id)
                 //console.log(game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()));
             }
             if (this.unitTarget != null && game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()) < distanceToAttack) {
@@ -151,8 +189,9 @@ function Unit(theGame, theController, thehealthBar) {
 
 }
 
-function Bullet(theGame, spawnX, spawnY) {
+function Bullet(theGame, spawnX, spawnY,theID) {
 
+    var bulletID = theID;
     var game = theGame;
     var bulletObject;
     var damage = 25;
@@ -162,6 +201,11 @@ function Bullet(theGame, spawnX, spawnY) {
     var targetUnit;
     var targetX;
     var targetY;
+
+
+    this.getID = function(){
+      return bulletID;
+    }
 
 
     this.getDamage = function(){
@@ -180,6 +224,7 @@ function Bullet(theGame, spawnX, spawnY) {
         targetUnit = unitTarget;
         targetX = getTargetPosition().x;
         targetY = getTargetPosition().y;
+        console.log('getting called');
     }
 
 
@@ -194,6 +239,13 @@ function Bullet(theGame, spawnX, spawnY) {
     }
 
     function getTargetPosition() {
+      if(targetUnit == null || targetUnit.unit().body == null){
+        console.log('prevent this text from logging else shit code')
+        return{
+          x: 0,
+          y: 0
+        };
+      }
         var xx = targetUnit.unit().body.position.x;
         var yy = targetUnit.unit().body.position.y;
         return {
@@ -251,11 +303,31 @@ function UnitManager(theGame, theController) {
     var game = theGame;
     var controller = theController;
     var units = [];
+    var client;
     game.input.activePointer.leftButton.onDown.add(controller.clickDragStart, this);
     game.input.activePointer.leftButton.onUp.add(clickDragStop, this);
 
     function sendControllerSelf() {
         controller.getUnitManager(this);
+    }
+
+    this.setClient = function(theClient){
+      client = theClient;
+    }
+
+    this.getClient = function(){
+      return client;
+    }
+
+    this.getUnitByID = function(id){
+      var theUnit;
+      units.forEach(function(unit,index){
+        if(unit.getID() == id){
+          theUnit = unit;
+          return;
+        }
+      })
+      return theUnit;
     }
 
     this.getUnits = function() {
@@ -276,11 +348,13 @@ function UnitManager(theGame, theController) {
         var myUnits = []
         units.forEach(function(unit, index) {
             if (unit.mine == true) {
-                var info = {
-                    unitID: unit.getID(),
-                    x: unit.GetPosition().x,
-                    y: unit.GetPosition().y
-                };
+              var info = {
+                  unitID: unit.getID(),
+                  x: unit.GetPosition().x,
+                  y: unit.GetPosition().y,
+                  targetID: unit.getTargetID(unit.unitTarget)
+              };
+
                 /*function(){
                           this.unitID = unit.getID();
                           this.position = unit.getPosition();
@@ -317,7 +391,11 @@ function UnitManager(theGame, theController) {
                     if (game.input.activePointer.button === Phaser.Mouse.RIGHT_BUTTON) {
                         if (subUnit.mine == false) {
                             controller.returnSelected().forEach(function(unit, index) {
-                                unit.unitTarget = subUnit;
+                                //unit.unitTarget = subUnit;
+                                client.socket.emit('newTarget',{
+                                  unitID: unit.getID(),
+                                  targetID: subUnit.getID()
+                                });
                             })
                         }
                         //socket.emit('click','click');
@@ -343,7 +421,7 @@ function UnitManager(theGame, theController) {
             return;
         }
         healthBar = new UnitHealthBar(game);
-        var newUnit = new Unit(game, controller, healthBar);
+        var newUnit = new Unit(game, controller, healthBar,client);
         newUnit.initialize(spawnX, spawnY, uid, mine);
         units.push(newUnit);
     }

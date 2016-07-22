@@ -35,8 +35,13 @@ function Controller(theGame,theClient){
         id: subUnit.getID(),
         x: x,
         y: y,
+        targetID: subUnit.getTargetID(subUnit.unitTarget)
       });
     })
+  }
+
+  this.getClient = function(){
+    return client;
   }
 
   this.getUnitManager = function(uMan){

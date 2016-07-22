@@ -14,7 +14,6 @@ function Game(){
   //var socket = io.connect('http://localhost:3000');
 
 
-
   var game = new Phaser.Game(2000, 900, Phaser.AUTO, '', {
     preload: preload,
     create: create,

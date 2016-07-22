@@ -15,26 +15,43 @@ exports.playerData = function(){
 
 }
 
-
+/*
 exports.unitData = function(){
 
-  this.unitID;
-  this.playerID;
-  this.x;
-  this.y;
+  var unitID;
+  var playerID;
+  var x;
+  var y;
+  this.test = 1;
+
+this.getPosition = function() {
+    return{
+      x: x,
+      y: y
+    };
+
+}
+
+this.getunitID = function(){
+  return unitID;
+}
+
+this.getPlayerID = function(){
+  return playerID;
+}
 
 
   this.initialize = function(uid,pid,newX,newY){
-    this.unitID = uid;
-    this.playerID = pid;
-    this.x = newX;
-    this.y = newY;
+    unitID = uid;
+    playerID = pid;
+    x = newX;
+    y = newY;
   }
 
   this.updatePosition = function(newX,newY){
-    this.x = newX;
-    this.y = newY;
+    x = newX;
+    y = newY;
   }
 
 
-}
+}*/
