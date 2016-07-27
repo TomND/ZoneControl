@@ -156,8 +156,18 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         })
     }
 
-    this.hit = function(damage){
+    this.takeDamage = function(damage){
       health -= damage;
+      console.log('hut');
+    }
+
+    this.hit = function(damage){
+      console.log('send hut')
+      health -= damage;
+      client.socket.emit('healthUpdate',{
+        id: id,
+        damage: damage
+      })
     }
 
     // processes movement
@@ -172,6 +182,9 @@ function Unit(theGame, theController, thehealthBar,theClient) {
             }
             if (this.unitTarget != null && game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()) < distanceToAttack) {
                 if(this.unitTarget.getHealth() <= 0){
+                  bullets.forEach(function(bullet,index){
+                    bullet.removeTarget();
+                  })
                   this.unitTarget = null;
                 }
                 attack(this.unitTarget);
@@ -216,6 +229,10 @@ function Bullet(theGame, spawnX, spawnY,theID) {
       return bulletObject;
     }
 
+    this.removeTarget = function(){
+      targetUnit = null;
+    }
+
 
     this.initialize = function(unitTarget) {
         var bullet = game.add.sprite(x, y, 'bullet');
@@ -229,7 +246,7 @@ function Bullet(theGame, spawnX, spawnY,theID) {
 
 
     this.move = function() {
-      if(targetUnit.unit().body == null && game.physics.arcade.distanceBetween(targetUnit.unit(),bulletObject) < 10){
+      if(targetUnit == null || (targetUnit.unit().body == null && game.physics.arcade.distanceBetween(targetUnit.unit(),bulletObject) < 10)){
         bulletObject.destroy();
       }
       else{

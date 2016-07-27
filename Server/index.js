@@ -60,6 +60,16 @@ io.on('connection', function(socket) {
       })
     })
 
+
+    socket.on('healthUpdate',function(data){
+      units.forEach(function(unit,index){
+        if(unit.id == data.id){
+          unit.health -= data.damage;
+        }
+      })
+      io.emit('healthUpdate',data);
+    })
+
     socket.on('createUnit', function(data) {
         console.log('unit created');
         var unitID = (Math.random() * (1000000 - 100)) + 100;

@@ -52,6 +52,10 @@ function Client() {
             })
         })
 
+        this.socket.on('healthUpdate',function(data){
+          unitManager.getUnitByID(data.id).takeDamage(data.damage)
+        })
+
         this.socket.on('newTarget',function(data){
           unitManager.getUnits().forEach(function(unit,index){
             if(unit.getID() == data.unitID){
