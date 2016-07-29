@@ -57,7 +57,7 @@ function Game(){
     unitManager = new UnitManager(game,controller);
     client.initialize(unitManager);
     client.listen();
-    client.updateUnitData();
+
 
 
 
@@ -70,7 +70,7 @@ function Game(){
     unitManager.processClicks();
     controller.update();
     //client.listen();
-    //client.updateUnitData();
+    client.updateUnitData();
     if(map.input.pointerDown()){
       if(this.input.activePointer.button === Phaser.Mouse.LEFT_BUTTON){
       //  console.log("gottem");

@@ -29,6 +29,7 @@ function Controller(theGame,theClient){
     var x = game.input.activePointer.position.x;
     var y = game.input.activePointer.position.y;
     selected.forEach(function(subUnit,index){
+      console.log(subUnit.isMine())
       subUnit.setTarget(x,y);
       console.log("this");
       client.socket.emit('UnitUpdate',{

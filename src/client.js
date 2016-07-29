@@ -25,6 +25,10 @@ function Client() {
 
     this.listen = function() {
 
+        this.socket.on('playerID',function(data){
+          playerID = data;
+        })
+
         this.socket.on('bullet', function(data) {
             var duplicate = false;
             unitManager.getUnits().forEach(function(unit, index) {
@@ -53,6 +57,7 @@ function Client() {
         })
 
         this.socket.on('healthUpdate',function(data){
+          console.log(data.id)
           unitManager.getUnitByID(data.id).takeDamage(data.damage)
         })
 
@@ -60,7 +65,8 @@ function Client() {
           unitManager.getUnits().forEach(function(unit,index){
             if(unit.getID() == data.unitID){
               var target = unitManager.getUnitByID(data.targetID)
-              unit.unitTarget = target;
+              unit.setEnemy(target);
+
             }
           })
         })
@@ -79,7 +85,14 @@ function Client() {
         });
 
         this.socket.on('createUnit', function(data) {
-            unitManager.createUnit(data.x, data.y, data.uID, true);
+            var mine;
+            if(data.playerID == playerID){
+              mine = true;
+            }
+            else {
+              mine = false;
+            }
+            unitManager.createUnit(data.x, data.y, data.uID, mine);
         });
 
         this.socket.on('unitData', function(data) {
