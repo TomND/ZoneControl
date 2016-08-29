@@ -37,18 +37,20 @@ function Client() {
                     unit.getBullets().forEach(function(bullet,index){
                       if(bullet.getID() == data.bulletID){
                         duplicate = true;
-                        //console.log('duplicate found')
+                        console.log('duplicate found')
                       }
                     });
 
-                    var theTarget;
+                    /*var theTarget;
                     unitManager.getUnits().forEach(function(unittarg, index1) {
                         if (unittarg.getID() == data.target) {
                             theTarget = unittarg;
                         }
-                    })
+                    })*/
+                    var theTarget = unitManager.getUnitByID(data.target)
+                    console.log(theTarget + 'is the target OK?');
                     if(duplicate == false){
-                      //console.log(data.bulletID);
+                      console.log("createBullet");
                       unit.createBullet(data.x, data.y, theTarget,data.bulletID);
                     }
 
