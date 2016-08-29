@@ -41,6 +41,7 @@ function Game(){
   function create(){
     game.stage.disableVisibilityChange = true;
     client = new Client();
+
     //disables right click menu in browser
     game.canvas.oncontextmenu = function(e) {
       e.preventDefault();
@@ -55,6 +56,8 @@ function Game(){
     controller = new Controller(game,client);
     unitManager = new UnitManager(game,controller);
     client.initialize(unitManager);
+    client.listen();
+
 
 
 
@@ -66,7 +69,7 @@ function Game(){
     unitManager.processMovement();
     unitManager.processClicks();
     controller.update();
-    client.listen();
+    //client.listen();
     client.updateUnitData();
     if(map.input.pointerDown()){
       if(this.input.activePointer.button === Phaser.Mouse.LEFT_BUTTON){

@@ -1,20 +1,19 @@
 /*
  * Unit objeect. contains everything unit. each unit is a object of this class
  */
-function Unit(theGame, theController, thehealthBar,theClient) {
+function Unit(theGame, theController, thehealthBar, theClient) {
     var client = theClient;
     var game = theGame;
     var controller = theController;
     var healthBar = thehealthBar;
     var unitObject;
-    var mine;
     var speed = 100;
     var targetX;
     var targetY;
     var health = 100;
     var id;
-    this.mine;
-    this.unitTarget;
+    var mine;
+    var enemy;
     var distanceToAttack = 150;
     bullets = [];
     var fireRate = 1000;
@@ -38,8 +37,8 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         targetY = y;
     }
 
-    this.getHealth = function(){
-      return health;
+    this.getHealth = function() {
+        return health;
     }
 
 
@@ -50,26 +49,42 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         };
     };
 
-    this.getBullets = function(){
-      return bullets;
+    this.getBullets = function() {
+        return bullets;
     }
 
-    this.getTargetID = function(target){
-      if(target == null){
-        return null
-      }
-      else{
-        return target.getID();
-      }
+    this.getTargetID = function(target) {
+        if (target == null) {
+            return null
+        } else {
+            return target.getID();
+        }
     }
 
-    function getTargetIDPrivate(target){
-      if(target == null){
-        return null
-      }
-      else{
-        return target.getID();
-      }
+    this.isMine = function() {
+        return mine;
+    }
+
+    this.getEnemy = function() {
+        return enemy;
+    }
+
+    this.setEnemy = function(newEnemy) {
+        console.log(newEnemy + 'is the new enemyt')
+        enemy = newEnemy;
+    }
+
+    function getTargetIDPrivate(target) {
+        if (target == null) {
+            return null
+        } else {
+            return target.getID();
+        }
+    }
+
+    function getEnemyID() {
+        return enemy.getID();
+
     }
 
 
@@ -82,12 +97,21 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         unitObject = game.add.sprite(spawnX, spawnY, 'unit');
         unitObject.inputEnabled = true;
         game.physics.enable(unitObject, Phaser.Physics.ARCADE);
-        unitObject.events.onInputDown.add(function(image) {
+        /*unitObject.events.onInputDown.add(function(image) {
             controller.addToSelected(image, this);
-        }, this);
+        }, this);*/
         healthBar.initialize(spawnX, spawnY);
         id = uid; // = Math.random() * (10000 - 1) + 1;
-        this.mine = isMine;
+        console.log(isMine)
+        mine = isMine;
+    }
+
+    var setMine = function(isMine) {
+        if (isMine == true) {
+            mine = true;
+        } else {
+            mine = false;
+        }
     }
 
     this.GetPosition = function() {
@@ -115,40 +139,39 @@ function Unit(theGame, theController, thehealthBar,theClient) {
             lastFire = new Date();
             //var bullet = new Bullet(game, GetPositionPrivate().x, GetPositionPrivate().y);
             //bullet.initialize(unitTarget);
-            client.socket.emit('bullet',{
-              id:id,
-              x: GetPositionPrivate().x,
-              y: GetPositionPrivate().y,
-              target: getTargetIDPrivate(unitTarget)
+            client.socket.emit('bullet', {
+                id: id,
+                x: GetPositionPrivate().x,
+                y: GetPositionPrivate().y,
+                target: enemy.getID()
             });
 
         }
 
     }
 
-    this.createBullet = function(x,y,target,theID){
-      console.log('bulletcreated');
-      var bullet = new Bullet(game, x, y,theID);
-      bullet.initialize(target);
-      bullets.push(bullet);
-    }
+
 
     // check for bullet collision and call bullet movement
     this.processBullets = function(units) {
-      if(bullets == null){
-        return;
-      }
+
+        if (bullets == null) {
+
+            return;
+        }
         bullets.forEach(function(bullet, bIndex) {
             units.forEach(function(unit, index) {
-              if(bullet.getBulletObject().body == null || unit.unit().body == null){
-                return;
-              }
-                if (Phaser.Rectangle.intersects(bullet.getBulletObject().body, unit.unit().body) && unit.mine == false) {
-                  console.log(unit.getID());
-                  console.log(id);
+                if (bullet.getBulletObject().body == null || unit.unit().body == null) {
+                    return;
+                }
+                if (Phaser.Rectangle.intersects(bullet.getBulletObject().body, unit.unit().body) && unit.isMine() == false) {
+                    //console.log(unit.getID());
+                    //console.log(id);
                     bullet.getBulletObject().destroy();
-                    unit.hit(bullet.getDamage());
-                    bullets.splice(bIndex,1);
+                    if (mine == true && enemy != null) {
+                        giveDamage(bullet.getDamage());
+                    }
+                    bullets.splice(bIndex, 1);
                 } else {
                     bullet.move();
                 }
@@ -156,9 +179,34 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         })
     }
 
-    this.hit = function(damage){
-      health -= damage;
+    this.createBullet = function(x, y, target, theID) {
+        console.log('bulletcreated');
+        var bullet = new Bullet(game, x, y, theID);
+        bullet.initialize(target);
+        bullets.push(bullet);
     }
+
+    this.takeDamage = function(damage) {
+        health -= damage;
+        console.log('hut');
+    }
+
+    function giveDamage(damage) {
+        console.log(enemy + ' is the ENENENENNENENENENENNNENNENENMY');
+        client.socket.emit('healthUpdate', {
+            id: getEnemyID(),
+            damage: damage
+        })
+    }
+
+    /*  this.hit = function(damage) {
+          console.log('send hut')
+          console.log(getUnitTarget() + "asdasdasdasdasdasdasdasdasdasdasdasdasd");
+          client.socket.emit('healthUpdate', {
+              id: id,
+              damage: damage
+          })
+      }*/
 
     // processes movement
     this.move = function() {
@@ -166,15 +214,22 @@ function Unit(theGame, theController, thehealthBar,theClient) {
         if (targetX == null || targetY == null || new Phaser.Rectangle(targetX, targetY, 10, 10).intersects(unitObject.body)) {
             unitObject.body.velocity.setTo(0, 0);
         } else {
-            if (this.unitTarget != null) {
-              console.log(id)
+            //console.log(target)
+            if (enemy != null) {
+                //console.log(game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()))
                 //console.log(game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()));
             }
-            if (this.unitTarget != null && game.physics.arcade.distanceBetween(unitObject, this.unitTarget.unit()) < distanceToAttack) {
-                if(this.unitTarget.getHealth() <= 0){
-                  this.unitTarget = null;
+            if (enemy != null && game.physics.arcade.distanceBetween(unitObject, enemy.unit()) < distanceToAttack) {
+
+                if (enemy.getHealth() <= 0) {
+                    bullets.forEach(function(bullet, index) {
+                        bullet.removeTarget();
+                    })
+                    enemy = null;
+                } else {
+                    attack(enemy);
                 }
-                attack(this.unitTarget);
+
                 unitObject.body.velocity.setTo(0, 0);
                 //console.log('attacking');
             } else {
@@ -189,7 +244,7 @@ function Unit(theGame, theController, thehealthBar,theClient) {
 
 }
 
-function Bullet(theGame, spawnX, spawnY,theID) {
+function Bullet(theGame, spawnX, spawnY, theID) {
 
     var bulletID = theID;
     var game = theGame;
@@ -203,17 +258,21 @@ function Bullet(theGame, spawnX, spawnY,theID) {
     var targetY;
 
 
-    this.getID = function(){
-      return bulletID;
+    this.getID = function() {
+        return bulletID;
     }
 
 
-    this.getDamage = function(){
-      return damage;
+    this.getDamage = function() {
+        return damage;
     }
 
-    this.getBulletObject = function(){
-      return bulletObject;
+    this.getBulletObject = function() {
+        return bulletObject;
+    }
+
+    this.removeTarget = function() {
+        targetUnit = null;
     }
 
 
@@ -224,28 +283,29 @@ function Bullet(theGame, spawnX, spawnY,theID) {
         targetUnit = unitTarget;
         targetX = getTargetPosition().x;
         targetY = getTargetPosition().y;
-        console.log('getting called');
+        //console.log('getting called');
     }
 
 
     this.move = function() {
-      if(targetUnit.unit().body == null && game.physics.arcade.distanceBetween(targetUnit.unit(),bulletObject) < 10){
-        bulletObject.destroy();
-      }
-      else{
-        game.physics.arcade.moveToXY(bulletObject, targetX, targetY, speed);
-      }
+      console.log('moving')
+        if (targetUnit == null || (targetUnit.unit().body == null && game.physics.arcade.distanceBetween(targetUnit.unit(), bulletObject) < 10)) {
+            bulletObject.destroy();
+            console.log('ISSUEEEEEEE')
+        } else {
+            game.physics.arcade.moveToXY(bulletObject, targetX, targetY, speed);
+        }
 
     }
 
     function getTargetPosition() {
-      if(targetUnit == null || targetUnit.unit().body == null){
-        console.log('prevent this text from logging else shit code')
-        return{
-          x: 0,
-          y: 0
-        };
-      }
+        if (targetUnit == null || targetUnit.unit().body == null) {
+            console.log('prevent this text from logging else shit code')
+            return {
+                x: 0,
+                y: 0
+            };
+        }
         var xx = targetUnit.unit().body.position.x;
         var yy = targetUnit.unit().body.position.y;
         return {
@@ -311,23 +371,23 @@ function UnitManager(theGame, theController) {
         controller.getUnitManager(this);
     }
 
-    this.setClient = function(theClient){
-      client = theClient;
+    this.setClient = function(theClient) {
+        client = theClient;
     }
 
-    this.getClient = function(){
-      return client;
+    this.getClient = function() {
+        return client;
     }
 
-    this.getUnitByID = function(id){
-      var theUnit;
-      units.forEach(function(unit,index){
-        if(unit.getID() == id){
-          theUnit = unit;
-          return;
-        }
-      })
-      return theUnit;
+    this.getUnitByID = function(id) {
+        var theUnit;
+        units.forEach(function(unit, index) {
+            if (unit.getID() == id) {
+                theUnit = unit;
+                return;
+            }
+        })
+        return theUnit;
     }
 
     this.getUnits = function() {
@@ -347,13 +407,13 @@ function UnitManager(theGame, theController) {
     this.getMine = function() {
         var myUnits = []
         units.forEach(function(unit, index) {
-            if (unit.mine == true) {
-              var info = {
-                  unitID: unit.getID(),
-                  x: unit.GetPosition().x,
-                  y: unit.GetPosition().y,
-                  targetID: unit.getTargetID(unit.unitTarget)
-              };
+            if (unit.isMine() == true) {
+                var info = {
+                    unitID: unit.getID(),
+                    x: unit.GetPosition().x,
+                    y: unit.GetPosition().y,
+                    targetID: unit.getTargetID(unit.getEnemy())
+                };
 
                 /*function(){
                           this.unitID = unit.getID();
@@ -369,14 +429,15 @@ function UnitManager(theGame, theController) {
     this.processMovement = function() {
         units.forEach(function(subUnit, index) {
             if (subUnit != undefined) {
-              if(subUnit.getHealth() <= 0){
-                subUnit.destroySprites();
-                units.splice(index,1);
-              }
-              else{
-                subUnit.move();
-                subUnit.processBullets(units);
-              }
+                if (subUnit.getHealth() <= 0) {
+                    client.socket.emit('unitDead', subUnit.getID())
+                    subUnit.destroySprites();
+                    units.splice(index, 1);
+
+                } else {
+                    subUnit.move();
+                    subUnit.processBullets(units);
+                }
 
             }
 
@@ -389,12 +450,14 @@ function UnitManager(theGame, theController) {
             if (subUnit != undefined && subUnit.unit().body != null) {
                 if (subUnit.unit().input.pointerDown()) {
                     if (game.input.activePointer.button === Phaser.Mouse.RIGHT_BUTTON) {
-                        if (subUnit.mine == false) {
+                        if (subUnit.isMine() == false) {
                             controller.returnSelected().forEach(function(unit, index) {
                                 //unit.unitTarget = subUnit;
-                                client.socket.emit('newTarget',{
-                                  unitID: unit.getID(),
-                                  targetID: subUnit.getID()
+                                console.log('newtarget')
+                                console.log(subUnit.getID())
+                                client.socket.emit('newTarget', {
+                                    unitID: unit.getID(),
+                                    targetID: subUnit.getID()
                                 });
                             })
                         }
@@ -411,7 +474,7 @@ function UnitManager(theGame, theController) {
     //@type spawnX: int
     //@type spawnY: int
     this.createUnit = function(spawnX, spawnY, uid, mine) {
-        var clone = false;
+        /*var clone = false;
         units.forEach(function(unit, index) {
             if (unit.getID() == uid) {
                 clone = true;
@@ -419,9 +482,9 @@ function UnitManager(theGame, theController) {
         })
         if (clone == true) {
             return;
-        }
+        }*/
         healthBar = new UnitHealthBar(game);
-        var newUnit = new Unit(game, controller, healthBar,client);
+        var newUnit = new Unit(game, controller, healthBar, client);
         newUnit.initialize(spawnX, spawnY, uid, mine);
         units.push(newUnit);
     }
@@ -436,6 +499,7 @@ function UnitManager(theGame, theController) {
     }
     // gets called when clickDragStops
     function clickDragStop() {
+        console.log('drag stop')
         controller.resetSelected();
         var rect = controller.returnSelectionBox();
         returnSelected(rect);

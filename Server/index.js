@@ -21,6 +21,15 @@ io.on('connection', function(socket) {
       io.emit('newTarget',data);
     })
 
+
+    socket.on('unitDead',function(data){
+      units.forEach(function(unit,index){
+        if(unit.unitID == data){
+          units.splice(index,1);
+        }
+      })
+    })
+
     socket.on('bullet',function(data){
       var bulletID = (Math.random() * (1000000 - 100)) + 100;
       data.bulletID = bulletID;
@@ -36,6 +45,7 @@ io.on('connection', function(socket) {
         var player = new dataFile.playerData();
         player.initialize(socket.id);
         players.push(player);
+        socket.emit('playerID',socket.id)
         socket.emit('unitData',units);
         console.log(units);
     })
@@ -60,6 +70,16 @@ io.on('connection', function(socket) {
       })
     })
 
+
+    socket.on('healthUpdate',function(data){
+      units.forEach(function(unit,index){
+        if(unit.id == data.id){
+          unit.health -= data.damage;
+        }
+      })
+      io.emit('healthUpdate',data);
+    })
+
     socket.on('createUnit', function(data) {
         console.log('unit created');
         var unitID = (Math.random() * (1000000 - 100)) + 100;
@@ -79,6 +99,7 @@ io.on('connection', function(socket) {
         units.push(unit);
         io.emit('createUnit', {
             uID: unitID,
+            playerID: socket.id,
             x: randX,
             y: randY
         });
