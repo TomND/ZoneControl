@@ -29,9 +29,11 @@ function Client() {
           playerID = data;
         })
 
+
         this.socket.on('bullet', function(data) {
+            console.log('A SOCKET CALLED BULLET HAS BEEN CALLED')
             var duplicate = false;
-            unitManager.getUnits().forEach(function(unit, index) {
+            unitManager.getUnits().some(function(unit, index) {
                 if (unit.getID() == data.id) {
 
                     unit.getBullets().forEach(function(bullet,index){
@@ -52,6 +54,7 @@ function Client() {
                     if(duplicate == false){
                       console.log("createBullet");
                       unit.createBullet(data.x, data.y, theTarget,data.bulletID);
+                      return
                     }
 
                 }

@@ -133,12 +133,16 @@ function Unit(theGame, theController, thehealthBar, theClient) {
     }
 
     function attack(targetUnit) {
+    	if (mine == false){
+    		return
+    	}
         var unitTarget = targetUnit;
         var time = new Date()
         if (time - lastFire > fireRate) {
             lastFire = new Date();
             //var bullet = new Bullet(game, GetPositionPrivate().x, GetPositionPrivate().y);
             //bullet.initialize(unitTarget);
+            console.log('emiting bullet info')
             client.socket.emit('bullet', {
                 id: id,
                 x: GetPositionPrivate().x,
@@ -164,13 +168,20 @@ function Unit(theGame, theController, thehealthBar, theClient) {
                 if (bullet.getBulletObject().body == null || unit.unit().body == null) {
                     return;
                 }
-                if (Phaser.Rectangle.intersects(bullet.getBulletObject().body, unit.unit().body) && unit.isMine() == false) {
+                if(unit.getID() == id){
+                	return;
+                }
+                console.log(enemy != null)
+                if (Phaser.Rectangle.intersects(bullet.getBulletObject().body, unit.unit().body) && ((mine == true &&unit.isMine() == false) || (mine == false && unit.isMine() == true)) && enemy != null) {
                     //console.log(unit.getID());
                     //console.log(id);
-                    bullet.getBulletObject().destroy();
-                    if (mine == true && enemy != null) {
+                    console.log('we are here')
+                    if (mine == true) {
                         giveDamage(bullet.getDamage());
+                        console.log('giving damage')
                     }
+                    console.log('destroy')
+                    bullet.getBulletObject().destroy();
                     bullets.splice(bIndex, 1);
                 } else {
                     bullet.move();
